@@ -24,7 +24,7 @@ Below that, add a button with the donut's name inside.
 4. Write an async fetchDonuts function that fetches from https://donut-of-the-day.herokuapp.com/donuts.
 Await the reponse, await calling .json() on it, and use the result to overwrite the 
 let donuts variable defined outside of the function.
-Then map over donuts, passing in the renderDonuts function as a callback,
+Then map over donuts, passing in the renderDonut function as a callback,
 join the result on an empty string, and set all of that as the main element's innerHTML.
 
 5. The HTML and CSS is up to you!  Use the provided "sofia_pro" font face and
