@@ -1,3 +1,31 @@
+const PORT = process.env.PORT || 3000;
+
+const express = require('express');
+const pg = require('pg');
+
+const app = express();
+
+app.use(express.static('public'));
+app.use(express.json());
+
+const db = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+
+db.query(`
+  CREATE TABLE IF NOT EXISTS votes(
+    id serial primary key,
+    donut varchar(128) not null,
+    voter varchar(128) not null,
+    date DATE DEFAULT CURRENT_DATE not null
+    );
+
+  CREATE UNIQUE INDEX vote_index
+  ON votes(voter, date);
+  `);
+
+app.listen(PORT, () =>
+  console.log(`Server is up and running at port ${PORT} 🚀`)
+);
+
 // Do this work on a branch!
 
 // Run yarn init -y to create a package.json
