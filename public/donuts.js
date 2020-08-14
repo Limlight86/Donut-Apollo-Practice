@@ -2,20 +2,20 @@ const main = document.querySelector('main');
 
 let donuts = [];
 
+if (!localStorage.getItem("voterId")) {
+  localStorage.setItem("voterId", String(Math.random()));
+}
+
+const voterId = localStorage.getItem("voterId");
 /* 
 
 The next thing we want to do is make it possible for a user 
 to vote for a donut...  
-
 To accomplish this we need some way to record who the user is.
-
 This is something new but I think you'll be able to follow.
-
 We can actually store some basic information on the user's browser.
-
 This is kind of similar to a cookie, which you've probably heard of,
 but a little simpler.
-
 You can store information in the browser like this:
 
 localStorage.setItem('nameOfKey', 'valueYouWantToStore')
@@ -75,21 +75,46 @@ either by running a select statement in psql,
 or by issuing a GET request to localhost:3000/votes.
 
 */
+async function voteForDonut(event){
+  const theButtonThatGotClicked = event.currentTarget;
+  const theClosestDonut = theButtonThatGotClicked.closest('.donut')
+  const donutId = theClosestDonut.dataset.donut;
+  url = '/votes';
+  fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify({
+      voter: voterId,
+      donut: donutId,
+    })
+  });
+}
 
 function renderDonut(donut) {
-  return `
+  const html = `
     <div class="donut" data-donut="${donut.id}">
       <img src="${donut.image}" alt="${donut.name}"/>
       <h2 class="vote-count">0</h2>
       <button>${donut.name}</button>
-    </div>`;
+    </div>
+    `;
+  const fragment = document.createRange().createContextualFragment(html);
+  const button = fragment.querySelector('button');
+  button.addEventListener('click', voteForDonut);
+  return fragment;
+    
 }
 
 const fetchDonuts = async () => {
   const url = `https://donut-of-the-day.herokuapp.com/donuts`;
   const donutsResponse = await fetch(url);
   donuts = await donutsResponse.json();
-  main.innerHTML = donuts.map(renderDonut).join('');
+  const fragments = donuts.map(renderDonut);
+  main.innerHTML = '';
+  main.prepend(...fragments);
 };
 
 fetchDonuts();
