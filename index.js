@@ -2,6 +2,7 @@ const PORT = process.env.PORT || 3000;
 
 const express = require('express');
 const pg = require('pg');
+const { response } = require('express');
 
 const app = express();
 
@@ -26,6 +27,17 @@ app.get('/votes', async (_request, response) => {
 //   "voter": "Andy",
 //   "donut": "Chocolate"
 // }
+app.post('/votes', async function(request, body){
+  const {voter, donut} = request.body;
+  if (!voter || !donut) {
+    response.status(406).json({ error: 'voter or donut requried' });
+  } else {
+    const result1 = await db.query(`DELETE FROM votes WHERE voter='${voter}' AND date = CURRENT_DATE RETURNING *;`);
+    
+    const result2 = await db.query(`INSERT INTO votes (donut, voter) VALUES ('$1', '${voter}') RETURNING *;`,[donut]);
+  }
+  response.json(result.rows[0]);
+});
 
 // You will want to declare voter and donut consts that would contain
 // the strings "Andy" and "Chocolate"
