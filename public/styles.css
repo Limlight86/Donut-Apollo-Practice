@@ -57,6 +57,10 @@ main {
   transform: scale(1.07);
 }
 
+.vote-count {
+  color: black;
+}
+
 button {
   font-family: "sofia_pro";
   padding: 1rem 2rem;
