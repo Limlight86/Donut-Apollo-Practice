@@ -10,26 +10,10 @@ app.use(express.json());
 
 const db = new pg.Pool({ connectionString: process.env.DATABASE_URL });
 
-// The next step is for you to add some endpoints to your API.
-
-// The first one will be a GET request to the '/votes' path.
-
-// The idea is for you to see who has voted for which donut.
-
-// You will need to await a query against your `db`,
-// so that it returns all information about all votes on the CURRENT_DATE,
-// and then store the result in a const called "result".
-
-// console.log your result object,
-// it should have a property called rows,
-// which represents all of the votes in your table.
-
-// Have your endpoint respond with a JSON respresentation of all of these rows.
-
-// You can check if this is working
-// by inserting a few votes into your database via psql,
-// and then issuing a GET request to localhost:3000/votes
-// either with your browser or with Postman.
+app.get('/votes', async (_request, response) => {
+  const result = await db.query(`SELECT * FROM votes WHERE date = CURRENT_DATE;`)
+  response.json(result.rows);
+});
 
 db.query(`
   CREATE TABLE IF NOT EXISTS votes(
