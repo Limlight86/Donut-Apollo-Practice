@@ -17,7 +17,7 @@ const db = new pg.Pool({ connectionString: process.env.DATABASE_URL });
 // The idea is for you to see who has voted for which donut.
 
 // You will need to await a query against your `db`,
-// so that it returns all information about all votes,
+// so that it returns all information about all votes on the CURRENT_DATE,
 // and then store the result in a const called "result".
 
 // console.log your result object,
