@@ -64,9 +64,15 @@ Then declare a const called theClosestDonut and set it equal to the closest thin
 Finally, declare a const called donutId, and set it equal to theClosestDonut's dataset's donut attribute.
 
 With this information, you are ready to use fetch to issue a POST request to the '/votes' endpoint (which you just made).
-Pass the correct Content-Type and Accept headers, and a JSON body that has a donut key equal to donutId, as well as a voter key equal to voterId.
 
-You won't be able to see the result of your vote in the website just yet, but you should be able to see that the vote was recorded, either by running a select statement in psql, or by issuing a GET request to localhost:3000/votes.
+Pass the correct Content-Type and Accept headers, 
+and a JSON body that has a donut key equal to donutId, 
+as well as a voter key equal to voterId.
+
+You won't be able to see the result of your vote in the website just yet, 
+but you should be able to see that the vote was recorded, 
+either by running a select statement in psql, 
+or by issuing a GET request to localhost:3000/votes.
 
 */
 
