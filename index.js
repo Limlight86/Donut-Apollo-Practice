@@ -10,7 +10,6 @@ app.use(express.json());
 
 const db = new pg.Pool({ connectionString: process.env.DATABASE_URL });
 
-
 app.get('/votes', async (_request, response) => {
   const result = await db.query(`SELECT * FROM votes WHERE date = CURRENT_DATE;`)
   response.json(result.rows);
