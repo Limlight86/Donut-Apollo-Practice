@@ -2,7 +2,7 @@ const PORT = process.env.PORT || 3000;
 
 const express = require("express");
 const pg = require("pg");
-const { ApolloServer, UserInputError, gql } = require("apollo-server-express");
+const { ApolloServer, gql } = require("apollo-server-express");
 
 const app = express();
 
@@ -28,35 +28,36 @@ const typeDefs = gql`
     donut: String!
   }
   type Query {
-    votes: [vote]!
+    votes: [Vote]!
   }
   type Mutation {
-    recordVote(voter: String!, donut: String!): vote!
+    recordVote(voter: String!, donut: String!): Vote!
   }
 `;
 
 const resolvers = {
   Query: {
     votes: async () => {
-      const result = await db.query(`SELECT * FROM votes WHERE date = CURRENT_DATE;`);
+      const result = await db.query(
+        `SELECT * FROM votes WHERE date = CURRENT_DATE;`
+      );
       return result.rows;
     },
   },
   Mutation: {
     recordVote: async (_, { voter, donut }) => {
-      if (!voter || !donut) {
-        throw new UserInputError("voter and donut requried");
-      }
-      const result = await db.query(
+      await db.query(
         `DELETE FROM votes WHERE voter = $1 AND date = CURRENT_DATE;`,
         [voter]
       );
       const result = await db.query(
-      `INSERT INTO votes (donut, voter) VALUES ($1, $2) RETURNING *;`,
-      [donut, voter]
-    );
-  }   
-}
+        `INSERT INTO votes (donut, voter) VALUES ($1, $2) RETURNING *;`,
+        [donut, voter]
+      );
+      return result.rows[0];
+    },
+  },
+};
 
 app.get("/votes", async (_request, response) => {
   const result = await db.query(
@@ -82,6 +83,11 @@ app.post("/votes", async function (request, response) {
   }
 });
 
-app.listen(PORT, () =>
-  console.log(`Server is up and running at port ${PORT} 🚀`)
+const server = new ApolloServer({ typeDefs, resolvers });
+server.applyMiddleware({ app });
+
+app.listen({ port: PORT }, () =>
+  console.log(
+    `Server is running at port ${PORT} 🚀, gql at ${server.graphqlPath}`
+  )
 );
