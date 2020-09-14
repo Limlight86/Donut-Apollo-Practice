@@ -6,7 +6,7 @@ const { ApolloServer, gql } = require("apollo-server-express");
 
 const app = express();
 
-app.use(express.static("public"));
+app.use(express.static("dist"));
 app.use(express.json());
 
 const db = new pg.Pool({ connectionString: process.env.DATABASE_URL });
