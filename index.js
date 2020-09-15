@@ -7,7 +7,6 @@ const { ApolloServer, gql } = require("apollo-server-express");
 const app = express();
 
 app.use(express.static("dist"));
-app.use(express.json());
 
 const db = new pg.Pool({ connectionString: process.env.DATABASE_URL });
 
@@ -58,30 +57,6 @@ const resolvers = {
     },
   },
 };
-
-app.get("/votes", async (_request, response) => {
-  const result = await db.query(
-    `SELECT * FROM votes WHERE date = CURRENT_DATE;`
-  );
-  response.json(result.rows);
-});
-
-app.post("/votes", async function (request, response) {
-  const { voter, donut } = request.body;
-  if (!voter || !donut) {
-    response.status(406).json({ error: "voter and donut requried" });
-  } else {
-    await db.query(
-      `DELETE FROM votes WHERE voter = $1 AND date = CURRENT_DATE;`,
-      [voter]
-    );
-    const result = await db.query(
-      `INSERT INTO votes (donut, voter) VALUES ($1, $2) RETURNING *;`,
-      [donut, voter]
-    );
-    response.json(result.rows[0]);
-  }
-});
 
 const server = new ApolloServer({ typeDefs, resolvers });
 server.applyMiddleware({ app });
